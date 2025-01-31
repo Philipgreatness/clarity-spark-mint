@@ -1,36 +1,49 @@
-[previous test content]
-
 Clarinet.test({
-    name: "Test staking mechanism",
+    name: "Test enhanced staking and governance features",
     async fn(chain: Chain, accounts: Map<string, Account>) {
         const deployer = accounts.get('deployer')!;
         const wallet1 = accounts.get('wallet_1')!;
+        const wallet2 = accounts.get('wallet_2')!;
         
+        // Test staking with cooldown
         let block = chain.mineBlock([
-            // Stake tokens
             Tx.contractCall('spark_mint', 'stake-tokens', [
-                types.uint(1000000)
+                types.uint(10000000) // 10M uSTX
             ], wallet1.address)
         ]);
-
         block.receipts[0].result.expectOk().expectBool(true);
 
-        // Mine some blocks to accumulate rewards
-        chain.mineEmptyBlock(10);
-
-        let rewardBlock = chain.mineBlock([
-            Tx.contractCall('spark_mint', 'claim-rewards', [], wallet1.address)
+        // Test proposal creation
+        let proposalBlock = chain.mineBlock([
+            Tx.contractCall('spark_mint', 'create-proposal', [
+                types.utf8("Test Proposal"),
+                types.utf8("Description"),
+                types.uint(100) // Duration
+            ], wallet1.address)
         ]);
+        proposalBlock.receipts[0].result.expectOk().expectUint(1);
 
-        rewardBlock.receipts[0].result.expectOk();
-
-        // Check staking position
-        let positionBlock = chain.mineBlock([
-            Tx.contractCall('spark_mint', 'get-staking-position', [
-                types.principal(wallet1.address)
-            ], deployer.address)
+        // Test voting
+        let voteBlock = chain.mineBlock([
+            Tx.contractCall('spark_mint', 'vote', [
+                types.uint(1), // Proposal ID
+                types.bool(true) // Support
+            ], wallet1.address)
         ]);
+        voteBlock.receipts[0].result.expectOk().expectBool(true);
 
-        positionBlock.receipts[0].result.expectOk().expectSome();
+        // Test unstaking process
+        let initiateUnstake = chain.mineBlock([
+            Tx.contractCall('spark_mint', 'initiate-unstake', [], wallet1.address)
+        ]);
+        initiateUnstake.receipts[0].result.expectOk().expectBool(true);
+
+        // Mine blocks to simulate cooldown
+        chain.mineEmptyBlock(144);
+
+        let completeUnstake = chain.mineBlock([
+            Tx.contractCall('spark_mint', 'complete-unstake', [], wallet1.address)
+        ]);
+        completeUnstake.receipts[0].result.expectOk().expectBool(true);
     }
 });
