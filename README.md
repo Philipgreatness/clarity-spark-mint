@@ -7,14 +7,22 @@ SparkMint is a decentralized platform for creating and managing dynamic communit
 - Dynamic NFT attributes that can evolve over time
 - Community voting mechanism for NFT traits
 - Decentralized ownership and transfer capabilities
-- Token staking with rewards system
+- Enhanced token staking with dynamic rewards system
+- Governance system for protocol parameters
 
-## Staking System
-Users can now stake STX tokens to earn SPARK reward tokens:
+## Enhanced Staking System
 - Minimum stake: 1,000,000 uSTX
-- Reward rate: 1% per block on staked amount
+- Dynamic reward rate governed by community
+- 24-hour unstaking cooldown period
+- Voting power based on stake amount
 - Rewards can be claimed at any time
-- Unstaking available with no lockup period
+
+## Governance System
+- Create proposals with 10M uSTX minimum stake
+- Voting power proportional to staked amount
+- Proposal duration customizable
+- Execute approved changes through smart contract
+- Modify protocol parameters through governance
 
 ## Getting Started
 1. Clone the repository
@@ -27,4 +35,5 @@ The main contract enables:
 - Community voting on NFT evolution
 - NFT transfers and ownership management
 - Metadata storage and updates
-- Token staking and rewards
+- Enhanced staking with cooldown period
+- Governance system for protocol changes
